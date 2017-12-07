@@ -9,9 +9,10 @@ public class DemoApplication {
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);
 
-        /*SpringApplication app = new SpringApplication(DemoApplication.class);
+       /* SpringApplication app = new SpringApplication(DemoApplication.class);
         app.setBannerMode(Banner.Mode.OFF);
         app.run(args);*/
+
 
 
         /*new SpringApplicationBuilder()
