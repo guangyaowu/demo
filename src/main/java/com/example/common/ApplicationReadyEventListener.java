@@ -2,6 +2,7 @@ package com.example.common;
 
 import com.example.app1.controller.UserController;
 
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
@@ -34,26 +35,30 @@ public class ApplicationReadyEventListener implements ApplicationListener<Applic
         BaseTask.taskClassNames.forEach((String taskClassName) -> {
             String taskGroup = "";
             String taskName = "";
-            String cron;
+            String cron = "";
             try {
                 Class<? extends Job> clazz = (Class<? extends Job>) Class.forName(taskClassName);
                 QuartzTask quartzTask = clazz.getAnnotation(QuartzTask.class);
-                taskGroup = quartzTask.taskGroup();
-                taskName = quartzTask.taskName();
-                cron = quartzTask.cron();
-                JobDetail job = JobBuilder
-                        .newJob(clazz)
-                        .withIdentity(taskName, taskGroup)
-                        .build();
-                Trigger trigger = TriggerBuilder
-                        .newTrigger()
-                        .withIdentity(taskName, taskGroup)
-                        .withSchedule(CronScheduleBuilder.cronSchedule(cron))
-                        .build();
-                Scheduler scheduler = new StdSchedulerFactory().getScheduler();
-                scheduler.start();
-                scheduler.scheduleJob(job, trigger);
-                logger.info("定时任务创建成功【" + taskGroup + "】【" + taskName + "】");
+                if (null != quartzTask) {
+                    taskGroup = quartzTask.taskGroup();
+                    taskName = quartzTask.taskName();
+                    cron = quartzTask.cron();
+                }
+                if (StringUtils.isNotBlank(taskGroup) && StringUtils.isNotBlank(taskName) && StringUtils.isNotBlank(cron)) {
+                    JobDetail job = JobBuilder
+                            .newJob(clazz)
+                            .withIdentity(taskName, taskGroup)
+                            .build();
+                    Trigger trigger = TriggerBuilder
+                            .newTrigger()
+                            .withIdentity(taskName, taskGroup)
+                            .withSchedule(CronScheduleBuilder.cronSchedule(cron))
+                            .build();
+                    Scheduler scheduler = new StdSchedulerFactory().getScheduler();
+                    scheduler.start();
+                    scheduler.scheduleJob(job, trigger);
+                    logger.info("定时任务创建成功【" + taskGroup + "】【" + taskName + "】");
+                }
 
             } catch (ClassNotFoundException | SchedulerException e) {
                 logger.error("定时任务创建失败【" + taskGroup + "】【" + taskName + "】");
