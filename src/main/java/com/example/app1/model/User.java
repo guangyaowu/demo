@@ -12,7 +12,7 @@ public class User implements Serializable {
     private String password;
     private Date createTime;
     private Date updateTime;
-    private int status;
+    private int status = 1;
 
     public int getStatus() {
         return status;

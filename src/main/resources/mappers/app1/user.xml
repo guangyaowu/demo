@@ -19,5 +19,47 @@
         SELECT * FROM t_user WHERE status = 1 ;
     </select>
 
+    <select id="getById" resultMap="user" parameterType="java.lang.Long">
+        SELECT * FROM t_user WHERE status = 1 AND id = #{id};
+    </select>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        UPDATE t_user SET status = 0 WHERE id = #{id};
+    </delete>
+
+    <insert id="insertSelective" parameterType="com.example.app1.model.User" keyProperty="id" keyColumn="id"
+            useGeneratedKeys="true">
+        INSERT INTO t_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="nick != null">nick,</if>
+            <if test="name != null">name,</if>
+            <if test="password != null">password,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="status != null">status,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="nick != null">#{nick},</if>
+            <if test="name != null">#{name},</if>
+            <if test="password != null">#{password},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="status != null">#{status},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSelective" parameterType="com.example.app1.model.User">
+        UPDATE t_user SET
+        <trim suffixOverrides=",">
+            <if test="nick != null">nick = #{nick},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        WHERE id = #{id};
+    </update>
 
 </mapper>

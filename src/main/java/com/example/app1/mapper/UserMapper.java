@@ -10,4 +10,11 @@ public interface UserMapper {
 
     List<User> findAll();
 
+    long insertSelective(User user);
+
+    User getById(long id);
+
+    void deleteById(long id);
+
+    void updateSelective(User user);
 }
