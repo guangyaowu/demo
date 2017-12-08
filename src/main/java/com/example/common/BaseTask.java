@@ -14,16 +14,4 @@ public abstract class BaseTask {
         taskClassNames.add("com.example.app1.task.TaskTwo");
     }
 
-
-    public abstract void beforeJob();
-
-    public abstract void afterJob();
-
-    protected abstract void doJob();
-
-    public void exe() {
-        beforeJob();
-        doJob();
-        afterJob();
-    }
 }

@@ -1,15 +1,14 @@
 package com.example.common;
 
 import com.example.app1.controller.UserController;
-import org.quartz.Trigger;
+
+import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
-import org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
 
 
@@ -24,6 +23,7 @@ public class ApplicationReadyEventListener implements ApplicationListener<Applic
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
         if (1 == taskSwitch) {
+            logger.info("定时任务开启");
             scanAndCreateTask();
         } else {
             logger.info("定时任务关闭");
@@ -31,31 +31,36 @@ public class ApplicationReadyEventListener implements ApplicationListener<Applic
     }
 
     private void scanAndCreateTask() {
-        logger.info("定时任务开启【创建定时任务】");
         BaseTask.taskClassNames.forEach((String taskClassName) -> {
+            String taskGroup = "";
+            String taskName = "";
+            String cron;
             try {
-                QuartzTask quartzTask = Class.forName(taskClassName).getAnnotation(QuartzTask.class);
-                //jobDetail
-               /* MethodInvokingJobDetailFactoryBean jobDetail = new MethodInvokingJobDetailFactoryBean();
-                jobDetail.setConcurrent(false);
-                jobDetail.setName(task.getTaskName());
-                jobDetail.setGroup(task.getTaskGroup());
-                jobDetail.setTargetObject(task);
-                jobDetail.setTargetMethod(JOB_METHOD_NAME);
-                BaseTask task = (BaseTask) jobDetail.getTargetObject();
-                //tigger
-                CronTriggerFactoryBean tigger = new CronTriggerFactoryBean();
-                tigger.setJobDetail(jobDetail.getObject());
-                tigger.setName(task.getTaskGroup() + "-" + task.getTaskName() + "-tigger");
-                //Scheduler
-                SchedulerFactoryBean bean = new SchedulerFactoryBean();
-                bean.setOverwriteExistingJobs(true);
-                bean.setStartupDelay(1);
-                Trigger cronJobTrigger;
-                bean.setTriggers(cronJobTrigger);*/
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                Class<? extends Job> clazz = (Class<? extends Job>) Class.forName(taskClassName);
+                QuartzTask quartzTask = clazz.getAnnotation(QuartzTask.class);
+                taskGroup = quartzTask.taskGroup();
+                taskName = quartzTask.taskName();
+                cron = quartzTask.cron();
+
+                JobDetail job = JobBuilder.newJob(clazz)
+                        .withIdentity(taskName, taskGroup).build();
+
+                Trigger trigger = TriggerBuilder
+                        .newTrigger()
+                        .withIdentity(taskName, taskGroup)
+                        .withSchedule(
+                                CronScheduleBuilder.cronSchedule(cron))
+                        .build();
+
+                Scheduler scheduler = new StdSchedulerFactory().getScheduler();
+                scheduler.start();
+                scheduler.scheduleJob(job, trigger);
+                logger.info("定时任务创建成功【" + taskGroup + taskName + "】");
+
+            } catch (ClassNotFoundException | SchedulerException e) {
+                logger.error("定时任务创建失败【" + taskGroup + taskName + "】");
             }
+
         });
     }
 }
