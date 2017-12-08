@@ -2,6 +2,8 @@ package com.example;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
@@ -9,10 +11,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class DemoApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(DemoApplication.class, args);
 
-       /* SpringApplication app = new SpringApplication(DemoApplication.class);
-        app.setBannerMode(Banner.Mode.OFF);
+        /*SpringApplication app = new SpringApplication(DemoApplication.class);
         app.run(args);*/
 
 
