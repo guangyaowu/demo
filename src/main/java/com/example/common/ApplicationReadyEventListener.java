@@ -41,24 +41,22 @@ public class ApplicationReadyEventListener implements ApplicationListener<Applic
                 taskGroup = quartzTask.taskGroup();
                 taskName = quartzTask.taskName();
                 cron = quartzTask.cron();
-
-                JobDetail job = JobBuilder.newJob(clazz)
-                        .withIdentity(taskName, taskGroup).build();
-
+                JobDetail job = JobBuilder
+                        .newJob(clazz)
+                        .withIdentity(taskName, taskGroup)
+                        .build();
                 Trigger trigger = TriggerBuilder
                         .newTrigger()
                         .withIdentity(taskName, taskGroup)
-                        .withSchedule(
-                                CronScheduleBuilder.cronSchedule(cron))
+                        .withSchedule(CronScheduleBuilder.cronSchedule(cron))
                         .build();
-
                 Scheduler scheduler = new StdSchedulerFactory().getScheduler();
                 scheduler.start();
                 scheduler.scheduleJob(job, trigger);
-                logger.info("定时任务创建成功【" + taskGroup + taskName + "】");
+                logger.info("定时任务创建成功【" + taskGroup + "】【" + taskName + "】");
 
             } catch (ClassNotFoundException | SchedulerException e) {
-                logger.error("定时任务创建失败【" + taskGroup + taskName + "】");
+                logger.error("定时任务创建失败【" + taskGroup + "】【" + taskName + "】");
             }
 
         });
