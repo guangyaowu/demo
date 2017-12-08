@@ -10,7 +10,7 @@ public interface UserMapper {
 
     List<User> findAll();
 
-    long insertSelective(User user);
+    void insertSelective(User user);
 
     User getById(long id);
 

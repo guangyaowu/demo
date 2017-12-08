@@ -14,6 +14,20 @@ public class CommonActionResults {
         return result;
     }
 
+    public static ActionResult success() {
+        ActionResult result = commonSet(SUCCESS_MESSAGE);
+        result.setCode(SUCCESS_CODE);
+        result.setMessage(SUCCESS_MESSAGE);
+        return result;
+    }
+
+    public static ActionResult fail() {
+        ActionResult result = commonSet(FAIL_MESSAGE);
+        result.setCode(FAIL_CODE);
+        result.setMessage(FAIL_MESSAGE);
+        return result;
+    }
+
     public static ActionResult success(Object data) {
         ActionResult result = commonSet(data);
         result.setCode(SUCCESS_CODE);

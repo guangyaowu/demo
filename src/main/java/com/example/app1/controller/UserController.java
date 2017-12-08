@@ -1,6 +1,7 @@
 package com.example.app1.controller;
 
 import com.example.app1.model.User;
+import com.example.app1.model.UserAccount;
 import com.example.app1.service.IUserService;
 import com.example.common.ActionResult;
 import com.example.common.CommonActionResults;
@@ -77,6 +78,27 @@ public class UserController {
         User user = userService.getById(id);
         logger.info("根据ID获取用户[" + id + "]");
         return CommonActionResults.success(user, "获取成功！");
+    }
+
+    /**
+     * 同时添加用户和账户信息（事务测试）
+     *
+     * @param
+     * @param
+     */
+    @PutMapping("/user/account")
+    public ActionResult saveUserAndUserAccount() {
+        User user = new User();
+        user.setNick("失误测试");
+        user.setName("shiwu");
+        user.setPassword("fdfdfs");
+        UserAccount account = new UserAccount();
+        account.setLoginAccount("sdgs");
+        account.setStatus(1);
+        account.setSiteName("百度");
+        account.setLoginPassword("gggg");
+        userService.saveUserAndUserAccount(user, account);
+        return CommonActionResults.success();
     }
 
 }

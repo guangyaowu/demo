@@ -1,6 +1,7 @@
 package com.example.app1.service;
 
 import com.example.app1.model.User;
+import com.example.app1.model.UserAccount;
 
 import java.util.List;
 
@@ -41,4 +42,14 @@ public interface IUserService {
      * @param id
      */
     void delete(long id);
+
+    /**
+     * 同时添加用户和账户信息（事务测试）
+     *
+     * @param user
+     * @param userAccount
+     */
+    void saveUserAndUserAccount(User user, UserAccount userAccount);
+
+
 }
