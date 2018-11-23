@@ -5,15 +5,23 @@ import com.example.app1.model.UserAccount;
 import com.example.app1.service.IUserService;
 import com.example.common.ActionResult;
 import com.example.common.CommonActionResults;
+import com.example.event.MyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController("user.controller")
 public class UserController {
+
+    @Autowired
+    private AbstractApplicationContext abstractApplicationContext;
 
     private final static Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
@@ -21,8 +29,10 @@ public class UserController {
 
     @GetMapping("/users")
     public ActionResult getAll() {
-        List<User> users = userService.findAll();
+//        List<User> users = userService.findAll();
+        List<User> users = new ArrayList<>();
         logger.info("获取所有用户[" + users + "]");
+        abstractApplicationContext.publishEvent(new MyEvent("自定义事件。。。"));
         return CommonActionResults.success(users, "获取成功！");
     }
 
@@ -99,5 +109,6 @@ public class UserController {
         userService.saveUserAndUserAccount(user, account);
         return CommonActionResults.success();
     }
+
 
 }
