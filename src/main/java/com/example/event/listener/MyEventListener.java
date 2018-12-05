@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 /**
- * @author guangyao.wu@ucarinc.com
+ * @author guangyao.wu
  * @description TODO
  * @date 2018/11/23 9:43
  **/
